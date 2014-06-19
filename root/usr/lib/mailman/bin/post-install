@@ -1,0 +1,33 @@
+#!/bin/bash
+
+[ -d /var/lib/mailman/lists/mailman ] && exit 0
+
+echo " "
+DOMAIN=`/sbin/e-smith/config get DomainName`
+if [ ! -d /var/lib/mailman/lists/mailman ]; then
+    MATRIX="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    LENGTH="8"
+    while [ "${n:=1}" -le "$LENGTH" ]; do 
+        PASS="$PASS${MATRIX:$(($RANDOM%${#MATRIX})):1}"
+        let n+=1
+    done
+    echo "* New site password: $PASS"
+    /sbin/e-smith/config setprop mailman SitePass $PASS
+
+    /usr/lib/mailman/bin/mmsitepass "$PASS" > /dev/null 2>&1 || :
+    /usr/lib/mailman/bin/newlist -q mailman admin@${DOMAIN} dummypass > /dev/null 2>&1 || :
+    cat > /tmp/hide << EOF
+advertised = 0
+archive_private = 1
+description = 'Mailman Mailing List'
+EOF
+    /usr/lib/mailman/bin/config_list -i /tmp/hide mailman > /dev/null 2>&1 || :
+    rm -f /tmp/hide
+    echo -n "* "
+    /usr/lib/mailman/bin/change_pw -l mailman 2> /dev/null || echo "New mailman password: *UNCHANGED*"; :
+    "/usr/lib/mailman/bin/add_members -r - -a n mailman << EOF
+    admin@${DOMAIN}
+EOF" > /dev/null 2>&1 || :
+else
+    /etc/e-smith/events/actions/email-assign || :
+fi

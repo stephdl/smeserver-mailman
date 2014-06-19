@@ -1,0 +1,79 @@
+#!/usr/bin/perl -w
+
+use esmith::Build::CreateLinks qw(:all);
+
+# For the panel link
+panel_link('mailman', 'manager');
+
+for my $event ( qw(
+		mailman-addlist
+		mailman-rmlist
+		))
+{
+    event_link($event, $event, "02");
+
+    templates2events("/var/service/qpsmtpd/config/goodrcptto", $event);
+
+    templates2events("/var/qmail/users/assign", $event);
+
+    safe_symlink("/var/qmail/bin/qmail-newu",
+        "root/etc/e-smith/events/$event/S55email-assign");
+
+    safe_symlink("sighup",
+	"root/etc/e-smith/events/$event/services2adjust/qpsmtpd");
+
+    safe_symlink("sighup",
+	"root/etc/e-smith/events/$event/services2adjust/sqpsmtpd");
+}
+
+
+for my $event ( qw(
+                bootstrap-console-save
+                ))
+{
+
+    templates2events( "/usr/lib/mailman/Mailman/mm_cfg.py", $event);
+
+    templates2events( "/etc/httpd/conf/httpd.conf", $event);
+
+}
+
+for my $event ( qw(
+		mailman-update
+		domain-create
+		domain-delete
+		))
+{
+
+    templates2events( "/usr/lib/mailman/Mailman/mm_cfg.py", $event);
+
+    templates2events( "/etc/httpd/conf/httpd.conf", $event);
+
+
+    safe_symlink("/usr/lib/mailman/bin/post-install", 
+        "root/etc/e-smith/events/$event/S20mailman-post-install");
+# removed because cause signal-event and panel to hang		
+#    safe_symlink("restart",
+#	"root/etc/e-smith/events/$event/services2adjust/mailman");
+safe_symlink("../actions/mailman-restart",
+	"root/etc/e-smith/events/$event/S94mailman-restart");
+}
+
+
+
+for my $event ( qw(
+                mailman-update
+                ))
+{
+
+
+
+    safe_symlink("sigusr1",
+        "root/etc/e-smith/events/$event/services2adjust/httpd-e-smith");
+
+
+}
+
+service_link_enhanced('mailman', 'S98', '7');
+service_link_enhanced('mailman', 'K12', '6');
+service_link_enhanced('mailman', 'K12', '0');

@@ -1,0 +1,68 @@
+#!/bin/sh
+#----------------------------------------------------------------------
+# Copyright (C) 2006 Gordon Rowell <gordonr@gormand.com.au>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License or more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+#----------------------------------------------------------------------
+
+# Quick conversion of ~alias file to mailman
+
+LIST=$1
+OWNER=$2
+
+TYPE=$(db accounts gettype $LIST)
+
+if [ -n "$TYPE" ]
+then
+    echo "$LIST is an existing account of type $TYPE"
+    exit 1
+fi
+
+ALIAS_FILE=/var/qmail/alias/.qmail-$LIST
+
+if [ ! -f $ALIAS_FILE ]
+then
+    echo "$ALIAS_FILE doesn't exist"
+    exit 2
+fi
+
+OWNER=$(config getprop mailman DefaultOwner)
+OWNER=${OWNER:-"admin@$DOMAIN"}
+
+/usr/lib/mailman/bin/newlist -q $LIST $OWNER dummypass > /dev/null 2>&1 || :
+
+cat > /tmp/hide << EOF
+advertised = 1
+archive_private = 1
+send_reminders = 0
+send_welcome_msg = 0
+send_goodbye_msg = 0
+description = 'Mailing list $LIST'
+EOF
+
+/usr/lib/mailman/bin/config_list -i /tmp/hide $LIST > /dev/null 2>&1 || :
+rm -f /tmp/hide
+
+/usr/lib/mailman/bin/change_pw -l $LIST 2> /dev/null || 
+        echo "New mailman password: *UNCHANGED*"; :
+
+grep -v '^#' $ALIAS_FILE |
+    sed -e 's/&//' |
+    /usr/lib/mailman/bin/add_members -r - -a n $LIST 
+
+expand-template /var/qmail/users/assign
+/var/qmail/bin/qmail-newu
+
+mv $ALIAS_FILE $ALIAS_FILE.mailman

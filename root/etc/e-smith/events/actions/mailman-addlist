@@ -1,0 +1,71 @@
+#!/usr/bin/perl -w
+
+#----------------------------------------------------------------------
+# copyright (C) 2000-2001 e-smith, inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+#
+# Technical support for this program is available from e-smith, inc.
+# For details, please visit our web site at www.e-smith.com or
+# call us on 1 888 ESMITH 1 (US/Canada toll free) or +1 613 564 8000
+#----------------------------------------------------------------------
+
+package esmith;
+
+use strict;
+use Errno;
+use esmith::config;
+use esmith::util;
+use esmith::db;
+
+my %conf;
+tie %conf, 'esmith::config';
+
+my %accounts;
+tie %accounts, 'esmith::config', '/home/e-smith/db/accounts';
+
+my $listName = $ARGV [1];
+my $domain = $ARGV [2];
+
+die "Listname argument missing." unless defined ($listName);
+$domain = db_get(\%conf, "DomainName") unless defined ($domain);
+
+my $listStatus = db_get_type(\%accounts, $listName);
+die "$listName already exists and is not a mailman mailing list.\n" if ($listStatus && $listStatus ne "mailmanlist");
+db_set(\%accounts, $listName, "mailmanlist", { Domain => "$domain" });
+
+my $cookedListName = $listName;
+$cookedListName =~ s/\./:/g;
+my $alias = "/usr/lib/mailman/aliases/.qmail-$listName";
+
+my %queues = ("", "post",
+              "-admin", "admin",
+              "-bounces", "bounces",
+              "-confirm", "confirm",
+              "-join", "join",
+              "-leave", "leave",
+              "-owner", "owner",
+              "-request", "request",
+              "-subscribe", "subscribe",
+              "-unsubscribe", "unsubscribe");
+
+umask(002);
+while(my ($tail,$que) = each(%queues))
+{
+    open(ALIAS, "> $alias$tail") or die "Cannot open $alias. $!\n";
+    print ALIAS "| /var/qmail/bin/preline /usr/lib/mailman/mail/mailman $que $listName\n";
+    close ALIAS or die "Cannot close $alias. $!\n";
+    chown(41,41,"$alias$tail");
+}

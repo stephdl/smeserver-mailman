@@ -1,0 +1,30 @@
+<lexicon lang="fr">
+    <entry>
+        <base>FORM_TITLE</base>
+        <trans>Configurer le gestionnaire de liste de diffusion Mailman</trans>
+    </entry>
+    <entry>
+        <base>FIRST_DESC</base>
+        <trans><![CDATA[ <p>Les options ci-dessous vont configurer votre gestionnaire de liste de diffusion Mailman.</p> <p>L'interface web Mailman est <a href="/mailman/listinfo">ici</a>.</p> ]]></trans>
+    </entry>
+    <entry>
+        <base>Mailman</base>
+        <trans>Mailman</trans>
+    </entry>
+    <entry>
+        <base>ERR_UPDATE</base>
+        <trans>ERREUR: Une erreur s'est produite en mettant à jour la configuration de Mailman.</trans>
+    </entry>
+    <entry>
+        <base>SUCCESS</base>
+        <trans>La configuration de Mailman a été correctement mise à jour.</trans>
+    </entry>
+    <entry>
+        <base>STATUS_DESC</base>
+        <trans>Les commandes suivantes contrôlent le statut du gestionnaire de liste de diffusion Mailman sur ce serveur. Sélectionnez les valeurs désirées et sauvegardez le panneau.</trans>
+    </entry>
+    <entry>
+        <base>STATUS_LABEL</base>
+        <trans>Statut de Mailman</trans>
+    </entry>
+</lexicon>

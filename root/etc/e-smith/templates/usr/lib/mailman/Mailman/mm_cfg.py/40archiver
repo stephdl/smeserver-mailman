@@ -1,0 +1,17 @@
+{
+    $OUT = "";
+    if( -x "/usr/lib/mailman/mhonarc/filter")
+    {
+        $OUT .= "PUBLIC_EXTERNAL_ARCHIVER = '/usr/lib/mailman/mhonarc/filter %(listname)s'\n";
+        $OUT .= "PRIVATE_EXTERNAL_ARCHIVER = '/usr/lib/mailman/mhonarc/filter %(listname)s'\n";
+        $OUT .= "PUBLIC_EXTERNAL_ARCHIVER = '/usr/lib/mailman/mhonarc/filter %(listname)s'\n";
+        $OUT .= "PRIVATE_EXTERNAL_ARCHIVER = '/usr/lib/mailman/mhonarc/filter %(listname)s'\n";
+    }
+    else
+    {
+        $OUT .= "PUBLIC_EXTERNAL_ARCHIVER = 0\n";
+        $OUT .= "PRIVATE_EXTERNAL_ARCHIVER = 0\n";
+        $OUT .= "PUBLIC_EXTERNAL_ARCHIVER = 0\n";
+        $OUT .= "PRIVATE_EXTERNAL_ARCHIVER = 0\n";
+    }
+}

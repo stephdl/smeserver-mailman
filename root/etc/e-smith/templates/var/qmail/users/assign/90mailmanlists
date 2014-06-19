@@ -1,0 +1,56 @@
+{
+    use esmith::config;
+    use esmith::db;
+
+    $OUT = '';
+
+    # Generate mailman user assignments for mailing lists. These will be handled
+    # by ~mailman/aliases/.qmail-listname and ~mailman/aliases/.qmail-listname-ext.
+
+    my %accounts;
+    tie %accounts, 'esmith::config', "/home/e-smith/db/accounts";
+
+    my (undef, undef, $uid, $gid, undef, undef, undef, $dir, undef)
+	= getpwnam("mailman");
+
+    # It is almost impossible to get Text::Template to output nothing
+    # on failure. It can be done by removing the newline at the end of
+    # this file but that is messy. Therefore, we'll simply return an
+    # error message that will make qmail-newu fail. Also send a
+    # warning message that will be captured in the logs.
+
+    unless (defined $uid && defined $gid && defined $dir)
+    {
+	my $msg =
+	    "Failed to obtain user details for \'mailman\' "
+	    . "while processing group assignments.";
+
+	warn "$msg\n";
+	$OUT = $msg;
+	return;
+    }
+
+    my $mailman_assign = "mailman:${uid}:${gid}:${dir}/aliases";
+
+    foreach my $listname (db_get(\%accounts))
+    {
+	next unless db_get_type(\%accounts, $listname) eq "mailmanlist";
+
+	# Assign mail for listname@
+	$OUT .= "=${listname}:${mailman_assign}:-:${listname}:\n";
+
+	# Assign mail for listname-ext@
+	$OUT .= "+${listname}-:${mailman_assign}:-${listname}-::\n";
+    }
+
+    # Need to remove the final newline character. Blank lines in
+    # /var/qmail/users/assign are prohibited.
+
+    chomp($OUT);
+
+    # Failsafe: /var/qmail/users/assign cannot have blank lines.
+    # Therefore, if $OUT is empty, simply set up an assign for the
+    # ezmlm user.
+
+    $OUT = "=mailman:${mailman_assign}:::" unless $OUT;
+}

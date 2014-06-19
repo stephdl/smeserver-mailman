@@ -1,0 +1,7 @@
+##############################################################
+# Put YOUR site-specific configuration below, in mm_cfg.py . #
+# See Defaults.py for explanations of the values.            #
+
+DEFAULT_EMAIL_HOST = '{ $DomainName }'
+DEFAULT_URL_HOST = '{ $DomainName }'
+

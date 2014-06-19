@@ -1,0 +1,19 @@
+#------------------------------------------------------------
+# mailman directories
+#------------------------------------------------------------
+
+<Directory /usr/lib/mailman/cgi-bin>
+    Options ExecCGI
+    AllowOverride None
+    order deny,allow
+    deny from all
+    allow from all
+</Directory>
+
+<Directory /var/lib/mailman/archives/public>
+    Options Indexes Includes FollowSymLinks
+    order deny,allow
+    deny from all
+    allow from all
+</Directory>
+

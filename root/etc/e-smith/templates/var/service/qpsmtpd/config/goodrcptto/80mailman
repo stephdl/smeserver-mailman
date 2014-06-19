@@ -1,0 +1,3 @@
+{
+    $OUT .= "mailman\@$_\n" for (@domains);
+}

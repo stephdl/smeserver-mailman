@@ -1,0 +1,22 @@
+##############################################################
+#    Here's where we override shipped defaults with settings #
+#    suitable for the RPM package.                           #
+ADMINDB_PAGE_TEXT_LIMIT = 8192
+DEFAULT_ADMIN_MEMBER_CHUNKSIZE = 50
+DEFAULT_BOUNCE_MATCHING_HEADERS = """
+"""
+DEFAULT_DIGEST_SIZE_THRESHHOLD = 250
+DEFAULT_MAX_MESSAGE_SIZE = 100
+DEFAULT_MAX_NUM_RECIPIENTS = 25
+DEFAULT_MSG_FOOTER = """_______________________________________________
+%(description)s
+%(list_name)s@%(host_name)s
+%(web_page_url)slistinfo%(cgiext)s/%(list_name)s
+"""
+LOG_DIR     = '/var/log/mailman'
+MAILMAN_UID = pwd.getpwnam('mailman')[2]
+MAILMAN_GID = grp.getgrnam('mailman')[2]
+PUBLIC_ARCHIVE_URL = 'http://%(hostname)s/mailman/public/%(listname)s'
+QUEUE_DIR   = '/var/spool/mailman/qfiles'
+USE_ENVELOPE_SENDER = 1
+

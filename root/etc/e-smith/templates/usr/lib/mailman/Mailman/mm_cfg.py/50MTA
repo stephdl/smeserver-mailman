@@ -1,0 +1,6 @@
+##############################################################
+# Set MTA to special SME.py module for creation/deletion     #
+# of lists.                                                  #
+
+MTA = 'SME'
+

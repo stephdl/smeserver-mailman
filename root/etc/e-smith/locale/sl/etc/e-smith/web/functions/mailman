@@ -1,0 +1,30 @@
+<lexicon lang="sl">
+    <entry>
+        <base>FORM_TITLE</base>
+        <trans>Configure Mailman mailing list manager</trans>
+    </entry>
+    <entry>
+        <base>FIRST_DESC</base>
+        <trans><![CDATA[ <p>The options below will configure your Mailman mailing list manager.</p> <p>The mailman web interface is <a href="/mailman/listinfo">here</a>.</p> ]]></trans>
+    </entry>
+    <entry>
+        <base>Mailman</base>
+        <trans>Mailman</trans>
+    </entry>
+    <entry>
+        <base>ERR_UPDATE</base>
+        <trans>ERROR: An error occurred while updating the Mailman configuration.</trans>
+    </entry>
+    <entry>
+        <base>SUCCESS</base>
+        <trans>The Mailman configuration was successfully updated.</trans>
+    </entry>
+    <entry>
+        <base>STATUS_DESC</base>
+        <trans>The following control manages the current status of the Mailman mailing list manager on this server. Select the desired value and save the panel.</trans>
+    </entry>
+    <entry>
+        <base>STATUS_LABEL</base>
+        <trans>Mailman status</trans>
+    </entry>
+</lexicon>

@@ -1,0 +1,4 @@
+Alias /mailman/public /var/lib/mailman/archives/public
+ScriptAlias /mailman /usr/lib/mailman/cgi-bin
+RedirectMatch ^/mailman[/]*$ /mailman/listinfo
+

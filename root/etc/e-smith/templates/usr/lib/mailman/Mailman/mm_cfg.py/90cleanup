@@ -1,0 +1,21 @@
+##############################################################
+# The following are set to clean up variables that were set  #
+# above.  Do not change or remove these unless you know what #
+# you are doing.                                             #
+
+DEFAULT_DIGEST_FOOTER = DEFAULT_MSG_FOOTER
+DEFAULT_HOST_NAME = DEFAULT_EMAIL_HOST
+DEFAULT_URL       = DEFAULT_URL_PATTERN % DEFAULT_URL_HOST
+INQUEUE_DIR       = os.path.join(QUEUE_DIR, 'in')
+OUTQUEUE_DIR      = os.path.join(QUEUE_DIR, 'out')
+CMDQUEUE_DIR      = os.path.join(QUEUE_DIR, 'commands')
+BOUNCEQUEUE_DIR   = os.path.join(QUEUE_DIR, 'bounces')
+NEWSQUEUE_DIR     = os.path.join(QUEUE_DIR, 'news')
+ARCHQUEUE_DIR     = os.path.join(QUEUE_DIR, 'archive')
+SHUNTQUEUE_DIR    = os.path.join(QUEUE_DIR, 'shunt')
+VIRGINQUEUE_DIR   = os.path.join(QUEUE_DIR, 'virgin')
+BADQUEUE_DIR      = os.path.join(QUEUE_DIR, 'bad')
+MAILDIR_DIR       = os.path.join(QUEUE_DIR, 'maildir')
+
+# Note - if you're looking for something that is imported from mm_cfg, but you
+# didn't find it above, it's probably in Defaults.py.

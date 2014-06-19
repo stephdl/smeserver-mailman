@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+#----------------------------------------------------------------------
+# $Id: tug-restart,v 1.23 2003/06/25 14:04:54 msoulier Exp $
+#----------------------------------------------------------------------
+# copyright (C) 1999-2003 Mitel Networks Corporation
+#----------------------------------------------------------------------
+
+package esmith;
+
+use strict;
+use warnings;
+use esmith::ConfigDB;
+use esmith::util;
+
+use constant TRUE  => 1;
+use constant FALSE => 0;
+
+my $init = '/etc/init.d/mailman';
+my $action;
+
+my $db = esmith::ConfigDB->open_ro
+    or die "Failed to open configuration database.\n";
+
+my $status = $db->get_prop('mailman', 'status') || 'disabled';
+
+if ($status eq 'enabled')
+{
+    $action = 'start';
+    $action = 'restart' if is_running();
+}
+else
+{
+    $action = '';
+    $action = 'stop' if is_running();
+}
+
+if ($action)
+{
+    esmith::util::serviceControl(
+        NAME => 'mailman',
+        ACTION => $action,
+        BACKGROUND => 'true'
+        ) or die "Failed to $action mailman\n";
+}
+
+exit 0;
+
+sub is_running
+{
+    chomp( my $output = `$init status` );
+    if ($output =~ /is running/)
+    {
+        return TRUE;
+    }
+    return FALSE;
+}

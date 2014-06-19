@@ -1,0 +1,16 @@
+{
+    # vim: ft=perl:
+    use esmith::DomainsDB;
+
+    my $domains = esmith::DomainsDB->open_ro;
+    $OUT = '';
+
+    foreach my $domainrec ($domains->domains)
+    {
+        next if $domainrec->prop('SystemServiceDomain');
+        $OUT .= "add_virtualhost('$domainrec->{key}', '$domainrec->{key}')\n";
+    }
+    # Also add the FQDN of the box itself, in case the list is being addressed
+    # in that fashion.
+    $OUT .= "add_virtualhost('$SystemName.$DomainName', '$SystemName.$DomainName')\n";
+}

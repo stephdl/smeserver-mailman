@@ -1,0 +1,31 @@
+#!/usr/bin/perl -wT
+
+package esmith;
+use strict;
+use esmith::util;
+
+my $usage = "$0 is not meant to be called from the command line.
+";
+
+my ($event, $list) = @ARGV;
+die $usage unless $event;
+die $usage unless $list;
+
+BEGIN
+{
+    $ENV {'PATH'} = '';
+    $ENV {'SHELL'} = '/bin/bash';
+    delete $ENV {'ENV'};
+}
+
+die "Unknown event $event" 
+	unless ($event =~ /^(addlist|rmlist|update)$/);
+$event = $1;
+
+die "Invalid list name $list" 
+	unless ($list =~ /^([\w\-\._]+)$/);
+$list = $1;
+
+esmith::util::setRealToEffective ();
+system ("/sbin/e-smith/signal-event", "mailman-$event", "$list") == 0
+    or die ("Error occurred while modifying mailman list $list.\n");

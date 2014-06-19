@@ -1,0 +1,60 @@
+#!/usr/bin/perl -wT
+# vim: ft=xml:
+
+#----------------------------------------------------------------------
+# heading     : Configuration
+# description : Mailman
+# navigation  : 6000 6750
+#
+# copyright (C) 1999-2003 Mitel Networks Corporation
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+# 
+# Technical support for this program is available from Mitel Networks 
+# Please visit our web site www.mitel.com/sme/ for details.
+#----------------------------------------------------------------------
+
+use strict;
+use esmith::FormMagick::Panel::mailman;
+
+my $cgi = esmith::FormMagick::Panel::mailman->new();
+$cgi->display();
+
+__DATA__
+<form
+    title="FORM_TITLE"
+    header="/etc/e-smith/web/common/head.tmpl"
+    footer="/etc/e-smith/web/common/foot.tmpl">
+
+    <page
+        name="First"
+        post-event="change_settings()"
+        pre-event="print_status_message()">
+
+        <description>FIRST_DESC</description>
+
+        <field
+            type="select"
+            id="status"
+            options="'disabled' => 'DISABLED', 'enabled' => 'ENABLED'"
+            value="get_status()">
+            <label>STATUS_LABEL</label>
+            <description>STATUS_DESC</description>
+        </field>
+
+        <subroutine src="print_button('SAVE')" />
+
+    </page>
+</form>
